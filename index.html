@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Calcolatore Vantaggi TFR</title>
+    <meta
+      name="description"
+      content="Webapp per calcolare risparmio fiscale, contributivo e mancata rivalutazione del TFR."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="brand-bar">
+      <div class="brand-wrap">
+        <img class="brand-logo" src="logo.svg" alt="Logo" />
+        <div class="brand-copy">
+          <p class="eyebrow">Calcolo datore di lavoro</p>
+          <h1>Vantaggi TFR al Fondo Pensione</h1>
+        </div>
+      </div>
+      <div class="toolbar" aria-label="Azioni">
+        <button class="icon-button" type="button" id="resetButton" title="Ripristina esempio">
+          <span aria-hidden="true">↺</span>
+          <span>Ripristina</span>
+        </button>
+        <button class="icon-button primary" type="button" id="printButton" title="Stampa o salva PDF">
+          <span aria-hidden="true">⎙</span>
+          <span>Stampa</span>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero-band" aria-labelledby="heroTitle">
+        <div>
+          <p class="eyebrow dark">Simulazione live</p>
+          <h2 id="heroTitle">Risparmio fiscale, contributivo e finanziario sul TFR</h2>
+        </div>
+        <dl class="rate-strip" aria-label="Parametri di calcolo">
+          <div>
+            <dt>Quota TFR</dt>
+            <dd>6,91%</dd>
+          </div>
+          <div>
+            <dt>IRES IRAP</dt>
+            <dd>27,9%</dd>
+          </div>
+          <div>
+            <dt>Misure</dt>
+            <dd>0,48%</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="workbench" aria-label="Calcolatore TFR">
+        <form class="input-panel" id="calculatorForm">
+          <div class="panel-heading">
+            <p class="eyebrow">Input</p>
+            <h2>Dati aziendali</h2>
+          </div>
+
+          <div class="field-grid">
+            <label class="field">
+              <span>N° dipendenti</span>
+              <input id="employees" name="employees" type="text" inputmode="numeric" value="20" />
+            </label>
+            <label class="field">
+              <span>Retribuzione Annua Lorda <strong>media</strong></span>
+              <div class="affix-field">
+                <span aria-hidden="true">€</span>
+                <input id="salary" name="salary" type="text" inputmode="decimal" value="36.000" />
+              </div>
+            </label>
+            <label class="field">
+              <span>Tasso inflazione anno corrente</span>
+              <div class="affix-field suffix">
+                <input id="inflation" name="inflation" type="text" inputmode="decimal" value="2,40" />
+                <span aria-hidden="true">%</span>
+              </div>
+            </label>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="panel-heading compact">
+            <p class="eyebrow">TFR maturato</p>
+            <h2>Fondo a bilancio</h2>
+          </div>
+          <label class="field wide">
+            <span>Fondo TFR a Bilancio nel 2025</span>
+            <div class="affix-field">
+              <span aria-hidden="true">€</span>
+              <input id="balanceFund" name="balanceFund" type="text" inputmode="decimal" value="0" />
+            </div>
+          </label>
+        </form>
+
+        <aside class="summary-panel" aria-live="polite">
+          <div class="panel-heading">
+            <p class="eyebrow">Scenario</p>
+            <h2>Risultato stimato</h2>
+          </div>
+          <dl class="summary-grid">
+            <div class="summary-item hero">
+              <dt>
+                <strong>Totale Risparmio</strong>
+                <em>(5+6) - TFR Maturando</em>
+              </dt>
+              <dd id="summaryTotal">€ 0,00</dd>
+            </div>
+            <div class="summary-item">
+              <dt>% di risparmio rispetto al TFR lasciato in azienda</dt>
+              <dd id="summaryPercent">0,00%</dd>
+            </div>
+            <div class="summary-item">
+              <dt>
+                <strong>Totale Risparmio</strong>
+                <em>(5+6) - TFR Maturato</em>
+              </dt>
+              <dd id="summaryMatured">€ 0,00</dd>
+            </div>
+            <div class="summary-item">
+              <dt>Scenario complessivo</dt>
+              <dd id="summaryGrand">€ 0,00</dd>
+            </div>
+          </dl>
+          <div class="rate-note">
+            <span>Mancata Rivalutazione TFR</span>
+            <strong id="revaluationRate">0,00%</strong>
+          </div>
+        </aside>
+      </section>
+
+      <section class="results-section" aria-labelledby="maturingTitle">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">TFR maturando</p>
+            <h2 id="maturingTitle">Dettaglio del risparmio annuo</h2>
+          </div>
+          <strong id="flowBadge">Flusso TFR: € 0,00</strong>
+        </div>
+
+        <div class="table-shell">
+          <table>
+            <thead>
+              <tr>
+                <th>Voce</th>
+                <th>Base di calcolo</th>
+                <th class="number">Risultato</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <span class="calc-index">1</span>
+                  <strong class="label-title">Montante Retributivo</strong>
+                </td>
+                <td><em>N° dipendenti × Retribuzione Annua Lorda media</em></td>
+                <td class="number" id="payroll">€ 0,00</td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="calc-index">2</span>
+                  <strong class="label-title">Flusso TFR al Fondo pensione</strong>
+                  <small>(6,91%)</small>
+                </td>
+                <td><em>Montante Retributivo × 6,91%</em></td>
+                <td class="number" id="tfrFlow">€ 0,00</td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="calc-index">3</span>
+                  <strong class="label-title">Deduzione extra 6% (IRES IRAP)</strong>
+                  <small>Ipotesi 27,9%</small>
+                </td>
+                <td><em>Flusso TFR × 6% × 27,9%</em></td>
+                <td class="number" id="extraDeduction">€ 0,00</td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="calc-index">4</span>
+                  <strong class="label-title">Misure compensative</strong>
+                  <small>(0,20%+0,28% del monte retributivo)</small>
+                </td>
+                <td><em>Montante Retributivo × 0,48%</em></td>
+                <td class="number" id="compensative">€ 0,00</td>
+              </tr>
+              <tr class="key-row">
+                <td>
+                  <span class="calc-index">5</span>
+                  <strong class="label-title">Totale risparmio fiscale e contributivo</strong>
+                  <small>(3+4)</small>
+                </td>
+                <td><em>Deduzione extra + Misure compensative</em></td>
+                <td class="number" id="taxContributionTotal">€ 0,00</td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="calc-index">6</span>
+                  <strong class="label-title">Mancata Rivalutazione TFR</strong>
+                  <small>(1,5% + 2,4%)</small>
+                </td>
+                <td><em>Flusso TFR × tasso rivalutazione applicato</em></td>
+                <td class="number" id="missedRevaluation">€ 0,00</td>
+              </tr>
+              <tr class="total-row">
+                <td>
+                  <strong class="label-title">Totale Risparmio</strong>
+                  <small>(5+6)</small>
+                </td>
+                <td><em>Totale risparmio fiscale e contributivo + Mancata Rivalutazione TFR</em></td>
+                <td class="number" id="totalSavings">€ 0,00</td>
+              </tr>
+              <tr class="key-row">
+                <td>
+                  <strong class="label-title">% di risparmio rispetto al TFR lasciato in azienda</strong>
+                </td>
+                <td><em>Totale Risparmio ÷ Flusso TFR al Fondo pensione</em></td>
+                <td class="number" id="savingsPercent">0,00%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="bottom-grid" aria-label="TFR maturato e composizione">
+        <div class="results-section compact-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">TFR maturato</p>
+              <h2>Risparmio su fondo a bilancio</h2>
+            </div>
+          </div>
+          <div class="matured-grid">
+            <dl>
+              <dt>
+                <strong>Mancata Rivalutazione TFR maturato</strong>
+                <em>(1,5% + 2,4%)</em>
+              </dt>
+              <dd id="maturedRevaluation">€ 0,00</dd>
+            </dl>
+            <dl class="matured-highlight">
+              <dt>
+                <strong>Totale Risparmio</strong>
+                <em>(5+6)</em>
+              </dt>
+              <dd id="maturedTotal">€ 0,00</dd>
+            </dl>
+          </div>
+        </div>
+
+        <div class="results-section compact-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Composizione</p>
+              <h2>Origine del beneficio</h2>
+            </div>
+          </div>
+          <div class="bar-list">
+            <div class="bar-row">
+              <span>Fiscale e contributivo</span>
+              <div class="bar-track"><span id="barFiscal"></span></div>
+              <strong id="barFiscalValue">€ 0,00</strong>
+            </div>
+            <div class="bar-row">
+              <span>Mancata rivalutazione maturando</span>
+              <div class="bar-track"><span id="barRevaluation"></span></div>
+              <strong id="barRevaluationValue">€ 0,00</strong>
+            </div>
+            <div class="bar-row">
+              <span>TFR maturato a bilancio</span>
+              <div class="bar-track"><span id="barMatured"></span></div>
+              <strong id="barMaturedValue">€ 0,00</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
