@@ -8,8 +8,8 @@ const RATES = {
 };
 
 const DEFAULTS = {
-  employees: "20",
-  salary: "36.000",
+  employees: "",
+  salary: "",
   inflation: "2,40",
   balanceFund: "0",
 };
@@ -169,6 +169,8 @@ function render(values) {
 
 function formatInputsOnBlur(event) {
   const input = event.currentTarget;
+  if (!input.value.trim()) return;
+
   const mode = input.id === "inflation" ? "percent" : "decimal";
   const value = clampPositive(parseLocaleNumber(input.value, mode));
 
